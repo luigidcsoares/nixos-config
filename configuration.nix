@@ -120,7 +120,7 @@
     enableCompletion = true;
     autosuggestions.enable = true;
     shellAliases = {
-      emacs = "emacsclient --alternate-editor=\"\" -c -tty";
+      emacst = "emacsclient --alternate-editor=\"\" -c -tty";
       emacs-reload = "systemctl --user restart emacs";
     };
     ohMyZsh = {
