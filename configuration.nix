@@ -16,10 +16,10 @@
     # docker-desktop.enable = true;
   };
 
-  nixpkgs.overlays = [
-    (import inputs.emacs-overlay)
-    (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; } )
-  ];
+ # nixpkgs.overlays = [
+ #   (import inputs.emacs-overlay)
+ #   (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; } )
+ # ];
 
   nix = {
     # This will add each flake input as a registry
@@ -49,7 +49,12 @@
     '';
 
     # Text editors
-    emacs.package = pkgs.emacsPgtk;
+    # emacs.package = pkgs.emacsPgtk;
+    emacs = {
+      defaultEditor = true;
+      enable = true; # Enable emacs as service
+      package = pkgs.emacs;
+    };
   };
 
   # Set your hostname
@@ -74,9 +79,6 @@
       ripgrep
       wget
       wl-clipboard
-
-      # Editor
-      emacsPgtk
 
       # Core Languages
       gcc
@@ -117,6 +119,10 @@
     enable = true;
     enableCompletion = true;
     autosuggestions.enable = true;
+    shellAliases = {
+      emacs = "emacsclient --alternate-editor=\"\" -c -tty";
+      emacs-reload = "systemctl --user restart emacs";
+    };
     ohMyZsh = {
       enable = true;
       plugins = [ "git" "fzf" ];
@@ -125,6 +131,7 @@
       source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
     '';
     shellInit = ''
+      export COLORTERM=truecolor
       eval "$(direnv hook zsh)"
     '';
   };
