@@ -16,10 +16,10 @@
     # docker-desktop.enable = true;
   };
 
- # nixpkgs.overlays = [
- #   (import inputs.emacs-overlay)
- #   (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; } )
- # ];
+  nixpkgs.overlays = [
+    (import inputs.emacs-overlay)
+    (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; } )
+  ];
 
   nix = {
     # This will add each flake input as a registry
@@ -53,7 +53,7 @@
     emacs = {
       defaultEditor = true;
       enable = true; # Enable emacs as service
-      package = pkgs.emacs;
+      package = pkgs.emacsPgtk;
     };
   };
 
@@ -65,7 +65,6 @@
       # Appearance
       gsettings-desktop-schemas
       arc-theme
-      oh-my-zsh
       zsh
       zsh-powerlevel10k
 
@@ -119,10 +118,6 @@
     enable = true;
     enableCompletion = true;
     autosuggestions.enable = true;
-    shellAliases = {
-      emacst = "emacsclient --alternate-editor=\"\" -c -tty";
-      emacs-reload = "systemctl --user restart emacs";
-    };
     ohMyZsh = {
       enable = true;
       plugins = [ "git" "fzf" ];
