@@ -1,0 +1,6 @@
+* NixOS (WSL) Config
+
+To use this, you will need to
+1. Clone the NixOS WSL repository: https://github.com/nzbr/NixOS-WSL
+2. Clone this repository or download [[configuration.nix][./configuration.nix]]
+3. Substitute the configuration file that comes with NixOS repository

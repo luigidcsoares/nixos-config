@@ -1,19 +1,26 @@
-# This is your system's configuration file.
-# Use this to configure your system environment (it replaces /etc/nixos/configuration.nix)
+{ inputs, pkgs, config, modulesPath, ... }:
 
-{ inputs, lib, config, pkgs,... }: {
-  # Just copied from https://github.com/nix-community/NixOS-WSL/blob/main/configuration.nix
+let
+  nixos-wsl = import ./default.nix;
+in
+{
+  imports = [
+    nixos-wsl.nixosModules.wsl
+  ];
+
   wsl = {
     enable = true;
     wslConf.automount.root = "/mnt";
     defaultUser = "nixos";
     startMenuLaunchers = true;
+    nativeSystemd = true;
 
     # Enable native Docker support
     docker-native.enable = true;
 
     # Enable integration with Docker Desktop (needs to be installed)
     # docker-desktop.enable = true;
+
   };
 
   nixpkgs.overlays = [
@@ -21,26 +28,7 @@
     (self: super: { nix-direnv = super.nix-direnv.override { enableFlakes = true; }; } )
   ];
 
-  nix = {
-    # This will add each flake input as a registry
-    # To make nix3 commands consistent with your flake
-    registry = lib.mapAttrs (_: value: { flake = value; }) inputs;
-
-    # This will additionally add your inputs to the system's legacy channels
-    # Making legacy nix commands consistent as well, awesome!
-    nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
-
-    settings = {
-      # Enable flakes and new 'nix' command
-      experimental-features = "nix-command flakes";
-      # Deduplicate and optimize nix store
-      auto-optimise-store = true;
-      # nix options for derivations to persist garbage collection
-      keep-outputs = true;
-      keep-derivations = true;
-    };
-  };
-
+  
   services = {
     # Appearance
     xserver.desktopManager.gnome.extraGSettingsOverrides = ''
@@ -136,6 +124,11 @@
     extraGroups.docker.members = [ "nixos" ];
   };
   
-  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+  # Enable nix flakes
+  nix.package = pkgs.nixFlakes;
+  nix.extraOptions = ''
+    experimental-features = nix-command flakes
+  '';
+
   system.stateVersion = "22.11";
 }
